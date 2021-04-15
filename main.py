@@ -16,13 +16,16 @@ def task():
 
 # schedule task
 scheduler = BackgroundScheduler()
-running_task = scheduler.add_job(task, 'interval', seconds=1, max_instances=1)
+running_task = scheduler.add_job(task, 'interval', seconds=5, max_instances=1)
 scheduler.start()
+
+@socketio.on('connected')
+def on_connected(data):
+    task()
 
 @app.route('/')
 def index_page():
-    rv = getData()
-    return render_template('index.html', rand_value=rv)
+    return render_template('index.html')
 
 if __name__=='__main__':
-    socketio.run(app, host='0.0.0.0')
+    socketio.run(app, host='0.0.0.0', debug=True)
