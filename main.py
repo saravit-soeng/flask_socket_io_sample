@@ -7,16 +7,17 @@ app = Flask(__name__, static_url_path='')
 socketio = SocketIO(app)
 
 def getData():
-    return random.randint(1, 100) # crawling code
+    rand_value = random.randint(1, 100)
+    return [f"Apple - {rand_value}", f"Banana - {rand_value}", f"Stawberry - {rand_value}"]
 
 # define task
 def task():
-    rand_value = getData()
-    socketio.emit('value update', rand_value, broadcast=True)
+    data = getData()
+    socketio.emit('value update', {'message':data}, broadcast=True)
 
 # schedule task
 scheduler = BackgroundScheduler()
-running_task = scheduler.add_job(task, 'interval', seconds=5, max_instances=1)
+running_task = scheduler.add_job(task, 'interval', seconds=20, max_instances=1)
 scheduler.start()
 
 @socketio.on('connected')
